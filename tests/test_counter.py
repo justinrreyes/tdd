@@ -10,3 +10,60 @@ how to call the web service and assert what it should return.
 - The service must be able to update a counter by name.
 - The service must be able to read the counter
 """
+
+import pytest
+
+# we need to import the unit under test - counter
+from src.counter import app
+
+# we need to import the file that contains the status codes
+from src import status
+
+@pytest.fixture()
+def client():
+    return app.test_client()
+
+@pytest.mark.usefixtures("client")
+class TestCounterEndPoints:
+    """Test cases for Counter-related endpoints"""
+
+    def test_create_a_counter(self, client):
+        """It should create a counter"""
+        result = client.post('/counters/foo')
+        assert result.status_code == status.HTTP_201_CREATED
+
+    def test_duplicate_a_counter(self, client):
+        """It should return an error for duplicates"""
+        result = client.post('/counters/bar')
+        assert result.status_code == status.HTTP_201_CREATED
+        result = client.post('/counters/bar')
+        assert result.status_code == status.HTTP_409_CONFLICT
+
+    def test_update_a_counter(self, client):
+        """It should update a counter"""
+        # Step 1: Create the counter
+        result = client.post('/counters/foo')
+        assert result.status_code == status.HTTP_201_CREATED
+
+        # Step 2: Check the initial value of the counter
+        result = client.get('/counters/foo')
+        assert result.status_code == status.HTTP_200_OK
+        assert result.json['foo'] == 0
+
+        # Step 3: Update the counter (increment by 1)
+        result = client.put('/counters/foo')
+        assert result.status_code == status.HTTP_200_OK
+
+        # Step 4: Check the updated value of the counter
+        result = client.get('/counters/foo')
+        assert result.status_code == status.HTTP_200_OK
+        assert result.json['foo'] == 1  # Value should be incremented by 1
+
+    def test_read_a_counter(client, name):
+        """Test reading a counter after creating it"""
+        create_response = client.post(f'/counters/{name}')
+        assert create_response.status_code == 201  # Created
+
+        get_response = client.get(f'/counters/{name}')
+        assert get_response.status_code == 200
+        assert get_response.json['counter'] == 0  # Initially, counter should be 0
