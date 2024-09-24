@@ -17,10 +17,11 @@ def create_counter(name):
     global COUNTERS
 
     if name in COUNTERS:
-        return {"Message":f"Counter {name} already exists"}, status.HTTP_409_CONFLICT
+        return {"Message": f"Counter {name} already exists"}, status.HTTP_409_CONFLICT
 
     COUNTERS[name] = 0
     return {name: COUNTERS[name]}, status.HTTP_201_CREATED
+
 
 @app.route('/counters/<name>', methods=['PUT'])
 def update_counter(name):
@@ -34,6 +35,7 @@ def update_counter(name):
     COUNTERS[name] += 1
     return {name: COUNTERS[name]}, status.HTTP_200_OK
 
+
 @app.route('/counters/<name>', methods=['GET'])
 def get_counter(name):
     """Retrieve the value of a counter"""
@@ -44,4 +46,3 @@ def get_counter(name):
         return {"message": f"Counter {name} not found"}, status.HTTP_404_NOT_FOUND
 
     return {name: COUNTERS[name]}, status.HTTP_200_OK
-
