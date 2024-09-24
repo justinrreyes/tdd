@@ -66,9 +66,11 @@ class TestCounterEndPoints:
 
     def test_read_a_counter(self, client):
         """Test reading a counter after creating it"""
-        create_response = client.post(f'/counters/foo')
+        counter_name = 'unique_read'
+
+        create_response = client.post(f'/counters/{counter_name}')
         assert create_response.status_code == 201  # Created
 
-        get_response = client.get(f'/counters/foo')
+        get_response = client.get(f'/counters/{counter_name}')
         assert get_response.status_code == 200
         assert get_response.json['counter'] == 0  # Initially, counter should be 0
