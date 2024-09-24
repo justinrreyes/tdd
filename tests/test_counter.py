@@ -23,6 +23,14 @@ from src import status
 def client():
     return app.test_client()
 
+
+@pytest.fixture(autouse=True)
+def reset_counters():
+    """Reset the global COUNTERS dict before each test"""
+    global COUNTERS
+    COUNTERS.clear()
+
+
 @pytest.mark.usefixtures("client")
 class TestCounterEndPoints:
     """Test cases for Counter-related endpoints"""
@@ -41,25 +49,26 @@ class TestCounterEndPoints:
 
     def test_update_a_counter(self, client):
         """It should update a counter"""
-        counter_name = "unique_name"
+        counter_name = 'unique_foo'
 
         # Step 1: Create the counter
-        result = client.post(f'/counters/{counter_name}')
-        assert result.status_code == status.HTTP_201_CREATED
+        create_response = client.post(f'/counters/{counter_name}')
+        assert create_response.status_code == status.HTTP_201_CREATED
 
         # Step 2: Check the initial value of the counter
-        result = client.get('/counters/{counter_name}')
-        assert result.status_code == status.HTTP_200_OK
-        assert result.json['foo'] == 0
+        get_response = client.get(f'/counters/{counter_name}')
+        assert get_response.status_code == status.HTTP_200_OK
+        assert get_response.json[counter_name] == 0
 
         # Step 3: Update the counter (increment by 1)
-        result = client.put('/counters/{counter_name}')
-        assert result.status_code == status.HTTP_200_OK
+        update_response = client.put(f'/counters/{counter_name}')
+        assert update_response.status_code == status.HTTP_200_OK
 
         # Step 4: Check the updated value of the counter
-        result = client.get('/counters/{counter_name}')
-        assert result.status_code == status.HTTP_200_OK
-        assert result.json['foo'] == 1  # Value should be incremented by 1
+        get_response_after_update = client.get(f'/counters/{counter_name}')
+        assert get_response_after_update.status_code == status.HTTP_200_OK
+        assert get_response_after_update.json[counter_name] == 1  # Value should be incremented by 1
+
 
     def test_read_a_counter(self, client):
         """Test reading a counter after creating it"""
