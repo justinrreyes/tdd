@@ -61,4 +61,3 @@ def delete_counter(name):
 
     del COUNTERS[name]
     return "", status.HTTP_204_NO_CONTENT
-
