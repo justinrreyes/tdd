@@ -19,16 +19,15 @@ from src.counter import app
 # we need to import the file that contains the status codes
 from src import status
 
-@pytest.fixture()
-def client():
-    return app.test_client()
-
-
 @pytest.fixture(autouse=True)
 def reset_counters():
     """Reset the global COUNTERS dict before each test"""
     global COUNTERS
     COUNTERS.clear()
+
+@pytest.fixture()
+def client():
+    return app.test_client()
 
 
 @pytest.mark.usefixtures("client")
