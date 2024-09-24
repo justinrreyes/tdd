@@ -41,29 +41,31 @@ class TestCounterEndPoints:
 
     def test_update_a_counter(self, client):
         """It should update a counter"""
+        counter_name = "unique_name"
+
         # Step 1: Create the counter
-        result = client.post('/counters/foo')
+        result = client.post(f'/counters/{counter_name}')
         assert result.status_code == status.HTTP_201_CREATED
 
         # Step 2: Check the initial value of the counter
-        result = client.get('/counters/foo')
+        result = client.get('/counters/{counter_name}')
         assert result.status_code == status.HTTP_200_OK
         assert result.json['foo'] == 0
 
         # Step 3: Update the counter (increment by 1)
-        result = client.put('/counters/foo')
+        result = client.put('/counters/{counter_name}')
         assert result.status_code == status.HTTP_200_OK
 
         # Step 4: Check the updated value of the counter
-        result = client.get('/counters/foo')
+        result = client.get('/counters/{counter_name}')
         assert result.status_code == status.HTTP_200_OK
         assert result.json['foo'] == 1  # Value should be incremented by 1
 
-    def test_read_a_counter(client, name):
+    def test_read_a_counter(self, client):
         """Test reading a counter after creating it"""
-        create_response = client.post(f'/counters/{name}')
+        create_response = client.post(f'/counters/foo')
         assert create_response.status_code == 201  # Created
 
-        get_response = client.get(f'/counters/{name}')
+        get_response = client.get(f'/counters/foo')
         assert get_response.status_code == 200
         assert get_response.json['counter'] == 0  # Initially, counter should be 0
