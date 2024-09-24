@@ -102,3 +102,22 @@ class TestCounterEndPoints:
 
         # Assert that the response message is correct
         assert response.json == {"message": f"Counter {counter_name} not found"}
+
+
+    def test_delete_counter(self, client):
+        """It should delete an existing counter and return 204 NO CONTENT"""
+        counter_name = 'test_counter'
+
+        # Create the counter first
+        client.post(f'/counters/{counter_name}')
+
+        # Now delete the counter
+        response = client.delete(f'/counters/{counter_name}')
+
+        # Assert that the response status code is 204 NO CONTENT
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        # Assert that the counter is actually deleted
+        get_response = client.get(f'/counters/{counter_name}')
+        assert get_response.status_code == status.HTTP_404_NOT_FOUND
+
