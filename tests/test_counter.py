@@ -121,3 +121,16 @@ class TestCounterEndPoints:
         get_response = client.get(f'/counters/{counter_name}')
         assert get_response.status_code == status.HTTP_404_NOT_FOUND
 
+
+    def test_delete_non_existent_counter(self, client):
+        """It should return 404 NOT FOUND when trying to delete a non-existent counter"""
+        counter_name = 'non_existent_counter'
+
+        # Attempt to delete the non-existent counter
+        response = client.delete(f'/counters/{counter_name}')
+
+        # Assert that the response status code is 404 NOT FOUND
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+        # Assert that the response message is correct
+        assert response.json == {"message": f"Counter {counter_name} not found"}
