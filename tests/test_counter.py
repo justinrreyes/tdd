@@ -73,4 +73,4 @@ class TestCounterEndPoints:
 
         get_response = client.get(f'/counters/{counter_name}')
         assert get_response.status_code == 200
-        assert get_response.json['counter'] == 0  # Initially, counter should be 0
+        assert get_response.json[counter_name] == 0  # Initially, counter should be 0
