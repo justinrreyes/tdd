@@ -9,6 +9,7 @@ COUNTERS = {}
 # specify the variable in route <name>
 # let Flask know that the only methods that is allowed to called
 # on this function is "POST".
+
 @app.route('/counters/<name>', methods=['POST'])
 def create_counter(name):
     """Create a counter"""
