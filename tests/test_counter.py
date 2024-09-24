@@ -134,3 +134,4 @@ class TestCounterEndPoints:
 
         # Assert that the response message is correct
         assert response.json == {"message": f"Counter {counter_name} not found"}
+
