@@ -74,3 +74,31 @@ class TestCounterEndPoints:
         get_response = client.get(f'/counters/{counter_name}')
         assert get_response.status_code == 200
         assert get_response.json[counter_name] == 0  # Initially, counter should be 0
+
+
+    def test_get_non_existent_counter(self, client):
+        """It should return a 404 NOT FOUND for a non-existent counter"""
+        counter_name = 'non_existent_counter'  # Name of the counter that does not exist
+
+        # Attempt to retrieve the non-existent counter
+        response = client.get(f'/counters/{counter_name}')
+
+        # Assert that the response status code is 404 NOT FOUND
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+        # Assert that the response message is correct
+        assert response.json == {"message": f"Counter {counter_name} not found"}
+
+
+    def test_update_non_existent_counter(self, client):
+        """It should return a 404 NOT FOUND for a non-existent counter"""
+        counter_name = 'non_existent_counter'  # Name of the counter that does not exist
+
+        # Attempt to update the non-existent counter
+        response = client.put(f'/counters/{counter_name}')
+
+        # Assert that the response status code is 404 NOT FOUND
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+        # Assert that the response message is correct
+        assert response.json == {"message": f"Counter {counter_name} not found"}
